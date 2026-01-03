@@ -209,7 +209,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h4>邮箱</h4>
-                    <p>contact@mywebsite.com</p>
+                    <p>contact@163.com</p>
                   </div>
                 </div>
                 <div className="info-item">
@@ -232,7 +232,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h4>地址</h4>
-                    <p>中国，北京市，朝阳区</p>
+                    <p>刚果盆地</p>
                   </div>
                 </div>
               </div>
