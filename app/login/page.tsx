@@ -2,19 +2,23 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { ensureDefaultAccount, loginWithPassword } from '@/lib/auth';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { loginWithPassword } from '@/lib/auth';
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    ensureDefaultAccount().catch(() => undefined);
-  }, []);
+    const presetEmail = searchParams.get('email');
+    if (presetEmail && presetEmail !== email) {
+      setEmail(presetEmail);
+    }
+  }, [searchParams, email]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +26,6 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      await ensureDefaultAccount();
       await loginWithPassword({ email, password });
       router.push('/dashboard');
     } catch (err) {

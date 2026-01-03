@@ -1,10 +1,8 @@
 'use client';
-
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ensureDefaultAccount, loginWithPassword, registerUser } from '@/lib/auth';
-
+import { registerUser } from '@/lib/auth';
 export default function RegisterPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -17,10 +15,12 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
 
     if (formData.password !== formData.confirmPassword) {
       setError('两次输入的密码不一致');
@@ -30,14 +30,15 @@ export default function RegisterPage() {
     setIsLoading(true);
     
     try {
-      await ensureDefaultAccount();
       await registerUser({
         email: formData.email,
         username: formData.username,
         password: formData.password,
       });
-      await loginWithPassword({ email: formData.email, password: formData.password });
-      router.push('/dashboard');
+      setSuccess('注册成功，请登录');
+      setIsLoading(false);
+      const email = encodeURIComponent(formData.email.trim());
+      router.push(`/login?email=${email}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : '注册失败，请稍后重试');
       setIsLoading(false);
@@ -71,6 +72,11 @@ export default function RegisterPage() {
             {error ? (
               <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {error}
+              </div>
+            ) : null}
+            {success ? (
+              <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                {success}
               </div>
             ) : null}
 
